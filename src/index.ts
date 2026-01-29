@@ -3,12 +3,9 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import jwt from "jsonwebtoken";
 import { db } from "./firebase";
-import dotenv from "dotenv";
-import * as functions from "firebase-functions";
 
-dotenv.config();
 const app = express();
-const JWT_SECRET = process.env.JWT_SECRET || "";
+const JWT_SECRET = process.env.JWT_SECRET || "f7b9c2a5e8d1436a9201f8b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3";
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -40,13 +37,14 @@ app.get("/user/:email", async (req: Request, res: Response) => {
         const user = { id: userDoc.id, email: userData.email };
 
         const token = jwt.sign(user, JWT_SECRET, { expiresIn: '24h' });
+
         res.json({
             success: true,
             user,
             token
         });
     } catch (error) {
-        res.status(500).json({ error: "Error searching for user", details: error });
+        res.status(500).json({ error: "Error fetching user", details: error });
     }
 });
 
@@ -70,6 +68,7 @@ app.post("/user", async (req: Request, res: Response) => {
 app.get("/tasks/:userId", authenticateToken, async (req: Request, res: Response) => {
     try {
         const userId = req.params.userId as string;
+
         if ((req as any).user.id !== userId) {
             return res.status(403).json({ error: "You do not have permission to view these tasks" });
         }
@@ -155,4 +154,4 @@ app.delete("/tasks/:id", authenticateToken, async (req: Request, res: Response) 
 });
 
 const PORT = process.env.PORT || 3000;
-export const api = functions.https.onRequest(app);
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
