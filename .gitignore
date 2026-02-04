@@ -10,7 +10,9 @@ firebase-debug.*.log*
 # Firebase cache
 .firebase/
 
-# Firebase config
+# Firebase config (credenciales; no subir)
+src/serviceFirebase.json
+serviceFirebase.json
 
 # Uncomment this if you'd like others to create their own Firebase project.
 # For a team working on the same Firebase project(s), it is recommended to leave
